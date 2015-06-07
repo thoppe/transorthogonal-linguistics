@@ -40,7 +40,7 @@ def closest_approach(x1,x2,W):
 
 def transorthogonal_words(w1, w2, features, word_cutoff=25):
 
-    W = features.syn0norm
+    W  = features.syn0norm
     x1 = features[w1]
     x2 = features[w2]
     
@@ -58,49 +58,51 @@ def transorthogonal_words(w1, w2, features, word_cutoff=25):
             timeline[chrono_idx])
 
 
-import argparse
-import logging
-desc = '''
-transorthogonal words
+if __name__ == "__main__":
 
-Moves across the lines spanned by the orthogonal space. Interesting cases:
-boy man mind body fate destiny teacher scientist girl woman
-conservative liberal hard soft religion rationalism
-'''
-parser = argparse.ArgumentParser(description=desc)
-parser.add_argument("-f", "--features",
-                    help="word2vec feature file",
-                    default=_default_database)
-parser.add_argument("--word_cutoff", '-c',
-                    help="Number of words to select",
-                    type=int, default=25)
-parser.add_argument("words",
-                    nargs="*",
-                    help="Space separated pairs of words example: "
-                    "python word_path.py boy man mind body")
+    import argparse
 
-args = parser.parse_args()
+    desc = '''
+    transorthogonal words
 
-if args.words is None:
-    msg = "You must either pick at least two words"
-    raise SyntaxError(msg)
+    Moves across the lines spanned by the orthogonal space. Interesting cases:
+    boy man mind body fate destiny teacher scientist girl woman
+    conservative liberal hard soft religion rationalism
+    '''
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument("-f", "--features",
+                        help="word2vec feature file",
+                        default=_default_database)
+    parser.add_argument("--word_cutoff", '-c',
+                        help="Number of words to select",
+                        type=int, default=25)
+    parser.add_argument("words",
+                        nargs="*",
+                        help="Space separated pairs of words example: "
+                        "python word_path.py boy man mind body")
 
-if len(args.words) % 2 != 0:
-    msg = "You input an odd number of words!"
-    raise SyntaxError(msg)
+    args = parser.parse_args()
 
-word_pairs = [[w1, w2] for w1, w2 in zip(args.words[::2],
-                                         args.words[1::2])]
+    if args.words is None:
+        msg = "You must either pick at least two words"
+        raise SyntaxError(msg)
 
-features = load_features(args.features)
+    if len(args.words) % 2 != 0:
+        msg = "You input an odd number of words!"
+        raise SyntaxError(msg)
+
+    word_pairs = [[w1, w2] for w1, w2 in zip(args.words[::2],
+                                             args.words[1::2])]
+
+    features = load_features(args.features)
 
 
-for w1, w2 in word_pairs:
+    for w1, w2 in word_pairs:
 
-    result = transorthogonal_words(w1, w2,
-                                   features,
-                                   args.word_cutoff)
+        result = transorthogonal_words(w1, w2,
+                                       features,
+                                       args.word_cutoff)
 
-    for word, time, distance in zip(*result):
-        print "{:0.5f} {:0.3f} {}".format(time, distance, word)
-    print
+        for word, time, distance in zip(*result):
+            print "{:0.5f} {:0.3f} {}".format(time, distance, word)
+        print
