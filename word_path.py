@@ -1,14 +1,5 @@
-import sqlite3
-import itertools
 import numpy as np
-
 from gensim.models.word2vec import Word2Vec
-
-print "Loading features..."
-f_features = "db/features.word2vec"
-features = Word2Vec.load(f_features)
-features.init_sims()
-
 
 def closest_approach(w1,w2):
     ''' 
@@ -41,7 +32,27 @@ def closest_approach(w1,w2):
 
     return D, T
 
+def transorthogonal_words(w1,w2, word_cutoff=25):
+    D,T = closest_approach(w1,w2)
 
+    close_idx = np.argsort(D)[:word_cutoff]
+    WORDS = np.array([features.index2word[idx] for idx in close_idx])
+    timeline = T[close_idx]
+    dist = D[close_idx]
+
+    chrono_idx = np.argsort(timeline)
+
+    return (WORDS[chrono_idx],
+            dist[chrono_idx],
+            timeline[chrono_idx])
+
+
+
+print "Loading features..."
+f_features = "db/features.word2vec"
+
+features = Word2Vec.load(f_features)
+features.init_sims()
 
 word_pairs = [
     ["boy","man"],
@@ -57,21 +68,8 @@ word_pairs = [
 ]
 
 for w1, w2 in word_pairs:
-    D,T = closest_approach(w1,w2)
 
-
-    word_cutoff = 25
-    close_idx = np.argsort(D)[:word_cutoff]
-    WORDS = np.array([features.index2word[idx] for idx in close_idx])
-    timeline = T[close_idx]
-    dist = D[close_idx]
-
-    chrono_idx = np.argsort(timeline)
-    timeline = timeline[chrono_idx]
-    WORDS = WORDS[chrono_idx]
-    dist = dist[chrono_idx]
-
-    print
+    WORDS,dist,timeline = transorthogonal_words(w1,w2)
 
     for w,t,d in zip(WORDS, timeline, dist):
         print "{:0.5f}, {} ({:0.3f})".format(t, w, d)
