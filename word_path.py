@@ -13,7 +13,7 @@ def load_features(f_features):
     return features
 
 
-def closest_approach(w1, w2):
+def closest_approach(x1,x2,W):
     '''
     Define a line segement, L between the two input vectors x1,x2.
     Parameterize the line by t, that linearly goes from 0->1 as x1->x2.
@@ -21,14 +21,10 @@ def closest_approach(w1, w2):
     and where along the line t.
     '''
 
-    X0 = features.syn0norm
-    x1 = features[w1]
-    x2 = features[w2]
-
     x21 = x2 - x1
     x21_norm = np.linalg.norm(x21)
 
-    X10 = x1 - X0
+    X10 = x1 - W
     X10_21 = X10.dot(x21)
 
     T = -X10_21 / x21_norm ** 2
@@ -43,7 +39,12 @@ def closest_approach(w1, w2):
 
 
 def transorthogonal_words(w1, w2, features, word_cutoff=25):
-    D, T = closest_approach(w1, w2)
+
+    W = features.syn0norm
+    x1 = features[w1]
+    x2 = features[w2]
+    
+    D, T = closest_approach(x1,x2,W)
 
     close_idx = np.argsort(D)[:word_cutoff]
     WORDS = np.array([features.index2word[idx] for idx in close_idx])
