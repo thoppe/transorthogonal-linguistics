@@ -1,0 +1,29 @@
+@import url('//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+
+.message_info, .message_success, .message_warning, .message_error {
+    margin : 10px 0px;
+    padding:12px;
+    border-radius:.5em;
+    font-family: monospace;
+}
+.message_info {
+    color: #00529B;
+    background-color: #BDE5F8;
+}
+.message_success {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+}
+.message_warning {
+    color: #9F6000;
+    background-color: #FEEFB3;
+}
+.message_error {
+    color: #D8000C;
+    background-color: #FFBABA;
+}
+.message_info i, .message_success i, .message_warning i, .message_error i {
+
+    font-size:1.5em;
+    vertical-align:middle;
+}

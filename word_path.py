@@ -4,11 +4,13 @@ from gensim.models.word2vec import Word2Vec
 
 _default_database = "db/features.word2vec"
 
+def validate_word(w, features):
+    return w in features
 
-def load_features(f_features):
-    msg = "Loading feature file {}".format(_default_database)
+def load_features(f_features=_default_database):
+    msg = "Loading feature file {}".format(f_features)
     logging.warning(msg)
-    features = Word2Vec.load(_default_database)
+    features = Word2Vec.load(f_features)
     features.init_sims()
     return features
 
@@ -65,9 +67,10 @@ if __name__ == "__main__":
     desc = '''
     transorthogonal words
 
-    Moves across the lines spanned by the orthogonal space. Interesting cases:
-    boy man mind body fate destiny teacher scientist girl woman
-    conservative liberal hard soft religion rationalism
+    Moves across the lines spanned by the orthogonal space. 
+    Interesting cases: boy man mind body fate destiny 
+    teacher scientist girl woman conservative liberal 
+    hard soft religion rationalism
     '''
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("-f", "--features",
@@ -93,7 +96,7 @@ if __name__ == "__main__":
 
     word_pairs = [[w1, w2] for w1, w2 in zip(args.words[::2],
                                              args.words[1::2])]
-
+    
     features = load_features(args.features)
 
 

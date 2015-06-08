@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>transorthogonal-linguistics</title>
+    <link rel=stylesheet type=text/css
+          href="{{url_for('static', filename='viewer.css')}}">
+
+    <link rel=stylesheet type=text/css
+          href="{{url_for('static', filename='buttons.css')}}">
+
+    <link rel=stylesheet type=text/css
+          href="{{url_for('static', filename='messages.css')}}">
+
+    <link rel="stylesheet" 
+          href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+ 
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+ 
+  </head>
+  <body>
+
+    <h1>transorthogonal-linguistics</h1>
+
+    {% from "_formhelpers.html" import render_field %}
+
+    <form method=post>
+      
+      {{ render_field(form.word1,placeholder="boy", autofocus=true) }}
+      {{ render_field(form.word2,placeholder="man") }}
+
+    <button class="pure-button"
+            onclick="compute_path()" id="compute_path">
+      <i class="fa fa-connectdevelop"></i>
+			translinguisticify
+    </button>
+    </form>
+    
+    <div class="container">
+      <h2>{{word1}}    {{word2}}</h2>
+
+      <ul>
+        {% for item in result_list %}
+        <li>{{item.0}} {{item.1}} {{item.2}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  </body>
+</html>
