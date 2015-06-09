@@ -55,7 +55,7 @@ def hello_world():
     else:
         w1,w2 = "boy","man"
 
-    word_cutoff = 25
+    word_cutoff = 30
 
     if form.validate():
         result = wp.transorthogonal_words(w1, w2,

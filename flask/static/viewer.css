@@ -7,9 +7,10 @@
 
 input {
     padding: 0px 10px;
-    line-height: 32px;
+    line-height: 33px;
     font-family: 'Goudy', sans-serif;
     font-size: medium;
+    vertical-align: middle;
 }
 
 body {
