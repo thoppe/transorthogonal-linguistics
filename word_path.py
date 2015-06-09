@@ -1,8 +1,8 @@
 import logging
 import numpy as np
-from gensim.models.word2vec import Word2Vec
 
 _default_database = "db/features.word2vec"
+
 
 def validate_word(w, features):
     return w in features
@@ -10,10 +10,15 @@ def validate_word(w, features):
 def load_features(f_features=_default_database):
     msg = "Loading feature file {}".format(f_features)
     logging.warning(msg)
-    features = Word2Vec.load(f_features)
+
+    import cPickle as _pickle
+    with open(f_features) as FIN:
+        features = _pickle.load(FIN)
+
+    features.syn0 = np.load(f_features + ".syn0.npy")
+
     features.init_sims()
     return features
-
 
 def closest_approach(x1,x2,W):
     '''
