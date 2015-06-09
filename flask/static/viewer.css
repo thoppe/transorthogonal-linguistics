@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Abril+Fatface);
+
 @font-face {
     font-family: Goudy;
     src: url(goudy/goudy_bookletter_1911-webfont.woff);
@@ -7,6 +9,7 @@ input {
     padding: 0px 10px;
     line-height: 32px;
     font-family: 'Goudy', sans-serif;
+    font-size: medium;
 }
 
 body {
@@ -15,10 +18,24 @@ body {
     font-family: 'Goudy', sans-serif;
 }
 
+
+.title {
+    font-family: 'Abril Fatface', cursive;
+    font-size:250%;
+    margin-left :5%;
+    margin-right:5%;
+    line-height:160%;
+    text-decoration: none;
+}
+
+.title a {
+  color: inherit; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}
+
 .container {
     margin-left :5%;
     margin-right:5%;
-
 }
  
 ul {
