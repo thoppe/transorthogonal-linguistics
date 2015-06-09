@@ -1,0 +1,1 @@
+web: gunicorn demo:app --log-file="wordlog.txt"

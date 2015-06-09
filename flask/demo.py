@@ -5,6 +5,10 @@ from flask import request
 from flask.ext.wtf import Form
 app = flask.Flask(__name__)
 
+import logging, sys
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.INFO)
+
 def bin_data(data, time, bins=12, max_x=1, min_x=0):
     items = []
         
@@ -19,14 +23,8 @@ def bin_data(data, time, bins=12, max_x=1, min_x=0):
         items.append(block)
         x += dx
 
-    return items
+    return items 
     
-    
-# Load the feature set, but not twice on debug mode
-import word_path as wp
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    features = wp.load_features()
-
 from wtforms import Form, TextField, validators
 
 class WordInputForm(Form):
@@ -44,7 +42,7 @@ class WordInputForm(Form):
     word2 = TextField('word2',[req2,word_in_featureset])
 
 @app.route('/', methods=['GET', 'POST'])
-def hello_world():
+def font_page():
 
     form = WordInputForm(request.form)
 
@@ -79,6 +77,8 @@ def hello_world():
     args["word1"] = w1
     args["word2"] = w2
 
+    logging.info("WORDS: {} {}".format(w1,w2))
+
     args["result_list"] = result
     #args["result_list"] = zip(*map(lambda x:x.tolist(),result))
     #print args["result_list"]
@@ -89,12 +89,12 @@ def hello_world():
     
     return flask.render_template('front.html',**args)
 
-#@app.route('/hello')
-#def hello_world2():
-#    return 'SUP!'
+
+# Load the feature set
+import word_path as wp
+features = wp.load_features()
 
 if __name__ == '__main__':
     app.config['SESSION_TYPE'] = 'filesystem'
-    
     app.debug=True
     app.run()

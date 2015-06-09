@@ -1,6 +1,9 @@
 # Temp files
 *~
 
+# Log file
+wordlog.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
