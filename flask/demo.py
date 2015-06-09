@@ -96,5 +96,5 @@ features = wp.load_features()
 
 if __name__ == '__main__':
     app.config['SESSION_TYPE'] = 'filesystem'
-    app.debug=True
+    #app.debug=True
     app.run()
