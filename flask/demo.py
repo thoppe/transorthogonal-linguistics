@@ -5,7 +5,23 @@ from flask import request
 from flask.ext.wtf import Form
 app = flask.Flask(__name__)
 
+def bin_data(data, time, bins=12, max_x=1, min_x=0):
+    items = []
+        
+    dx = (max_x-min_x)/float(bins)
+    x = min_x
+    
+    while x <= max_x:
+        block = []
+        for k,loc in enumerate(time):
+            if loc>=x and loc<x+dx:
+                block.append(data[k])
+        items.append(block)
+        x += dx
 
+    return items
+    
+    
 # Load the feature set, but not twice on debug mode
 import word_path as wp
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
@@ -27,7 +43,6 @@ class WordInputForm(Form):
     word1 = TextField('word1',[req1,word_in_featureset])
     word2 = TextField('word2',[req2,word_in_featureset])
 
-
 @app.route('/', methods=['GET', 'POST'])
 def hello_world():
 
@@ -35,8 +50,8 @@ def hello_world():
 
     if request.method == 'POST' and form.validate():      
         req = dict(request.form)
-        w1  = req["word1"][0]
-        w2  = req["word2"][0]
+        w1  = req["word1"][0].strip()
+        w2  = req["word2"][0].strip()
     else:
         w1,w2 = "boy","man"
 
@@ -46,13 +61,27 @@ def hello_world():
         result = wp.transorthogonal_words(w1, w2,
                                           features,
                                           word_cutoff)
+        words, distance, time = result
+
+        # Pop off the first and last words
+        #words = words[1:-1]
+        #distance = distance[1:-1]
+        #time = time[1:-1]
+        
+        word_blocks = bin_data(words, time)
+        result = [', '.join(x) if x else "&nbsp;"
+                  for x in word_blocks]
+
     else:
         result = []
         
     args = {}
     args["word1"] = w1
     args["word2"] = w2
-    args["result_list"] = zip(*map(lambda x:x.tolist(),result))
+
+    args["result_list"] = result
+    #args["result_list"] = zip(*map(lambda x:x.tolist(),result))
+    #print args["result_list"]
     #print map(type,zip(*map(list,result))[0])
     #args["result_json"] = json.dumps(args["result_list"])
 

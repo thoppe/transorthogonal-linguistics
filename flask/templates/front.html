@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-    
     
     <title>transorthogonal-linguistics</title>
     <link rel=stylesheet type=text/css
@@ -23,9 +21,11 @@
   </head>
   <body>
 
-    <h1>transorthogonal-linguistics</h1>
+    <h1>Transorthogonal-Linguistics</h1>
 
     {% from "_formhelpers.html" import render_field %}
+
+    <div class="container">
 
     <form method=post>
       
@@ -39,26 +39,23 @@
     </button>
     </form>
 
-    <div id="viz"></div>
-    
-    <div class="container">
-      <h2>{{word1}}    {{word2}}</h2>
+    <p>   
+
+      {# <h2>{{word1}}    {{word2}}</h2> #}
 
       <ul>
         {% for item in result_list %}
-        <li>{{item.0}} {{item.1}} {{item.2}}</li>
+        <li>{{item|safe}}</li>
         {% endfor %}
       </ul>
+
     </div>
 
-    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-
+    {#
     <script type="text/javascript">
       {% include 'd3viz.js' %}
     </script>
-
+    #}
     
   </body>
 </html>
