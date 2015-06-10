@@ -7,7 +7,7 @@ _default_vocab_file = "db/vocab.npy"
 
 def validate_word(w, features):
     # Returns true if the word exists
-    return w in features
+    return w in features.inv_index
 
 
 def save_features(f_features="db/features.word2vec"):
@@ -36,13 +36,15 @@ class Features(object):
     Helper class to simulate the numerical aspects of a gensim word2vec.
     '''
 
-    def __init__(self, f_features, f_vocab):
+    def __init__(self,
+                 f_features=_default_feature_file,
+                 f_vocab=_default_vocab_file):
 
-        msg = "Loading feature file {}".format(_default_feature_file)
+        msg = "Loading feature file {}".format(f_features)
         logging.warning(msg)
         self.features = np.load(f_features)
 
-        msg = "Loading vocab file {}".format(_default_vocab_file)
+        msg = "Loading vocab file {}".format(f_vocab)
         logging.warning(msg)
         self.vocab = np.load(f_vocab)
 
@@ -151,7 +153,7 @@ if __name__ == "__main__":
     features = Features(args.f_features,
                         args.f_vocab)
 
-    for w1, w2 in word_pairs:
+    for k, (w1, w2) in enumerate(word_pairs):
 
         result = transorthogonal_words(w1, w2,
                                        features,
@@ -159,4 +161,6 @@ if __name__ == "__main__":
 
         for word, time, distance in zip(*result):
             print "{:0.5f} {:0.3f} {}".format(time, distance, word)
-        print
+
+        if k:
+            print
