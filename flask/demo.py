@@ -5,9 +5,9 @@ from flask import request
 from flask.ext.wtf import Form
 app = flask.Flask(__name__)
 
-import logging, sys
-app.logger.addHandler(logging.StreamHandler(sys.stdout))
-app.logger.setLevel(logging.INFO)
+#import logging, sys
+#app.logger.addHandler(logging.StreamHandler(sys.stdout))
+#app.logger.setLevel(logging.INFO)
 
 def bin_data(data, time, bins=12, max_x=1, min_x=0):
     items = []
@@ -80,11 +80,6 @@ def font_page():
     logging.info("WORDS: {} {}".format(w1,w2))
 
     args["result_list"] = result
-    #args["result_list"] = zip(*map(lambda x:x.tolist(),result))
-    #print args["result_list"]
-    #print map(type,zip(*map(list,result))[0])
-    #args["result_json"] = json.dumps(args["result_list"])
-
     args["form"] = form
     
     return flask.render_template('front.html',**args)
