@@ -1,7 +1,7 @@
-# transorthogonal-linguistics
-[Travis Hoppe](http://thoppe.github.io/)
+## transorthogonal-linguistics
+_[Travis Hoppe](http://thoppe.github.io/)_
 
-If heroku is running, checkout the live demo:
+If heroku is running, checkout the live demo (it may take awhile to warm up):
 
 [https://transorthogonal-linguistics.herokuapp.com/](https://transorthogonal-linguistics.herokuapp.com/)
 
