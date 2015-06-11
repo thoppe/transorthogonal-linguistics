@@ -17,45 +17,58 @@
 
     <link rel="stylesheet" 
           href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
- 
+    
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
- 
+    
   </head>
   <body>
-
-    <div class="title">
-        <a href="https://github.com/thoppe/transorthogonal-linguistics">          transorthogonal linguistics
-      </a>
-    </div>
 
     {% from "_formhelpers.html" import render_field %}
 
     <div class="container">
 
-    <form method=post>
       
-      {{ render_field(form.word1,placeholder="boy", autofocus=true, autocapitalize="none",
-                                       onfocus="this.focus();this.select()") }}
-      {{ render_field(form.word2,placeholder="man", autocapitalize="none")}}
+      <div class="header">
+        <a href="https://github.com/thoppe/transorthogonal-linguistics">
+          transorthogonal linguistics
+        </a>
+      </div>
+
+      <div class="content">
+
+        <form method=post>
+          
+          {{ render_field(form.word1,placeholder="boy", autofocus=true, autocapitalize="none",
+          onfocus="this.focus();this.select()") }}
+          {{ render_field(form.word2,placeholder="man", autocapitalize="none")}}
 
 
-    <button class="pure-button"
-            onclick="compute_path()" id="compute_path">
-      <i class="fa fa-connectdevelop"></i>
-			translinguisticify
-    </button>
-    </form>
+          <button class="pure-button"
+                  onclick="compute_path()" id="compute_path">
+            <i class="fa fa-connectdevelop"></i>
+			      translinguisticify
+          </button>
+        </form>
 
-      {# <h2>{{word1}}    {{word2}}</h2> #}
+        {# <h2>{{word1}}    {{word2}}</h2> #}
 
-      <ul>
-        {% for item in result_list %}
-        <li>{{item|safe}}</li>
-        {% endfor %}
-      </ul>
+        <ul>
+          {% for item in result_list %}
+          <li>{{item|safe}}</li>
+          {% endfor %}
+        </ul>
 
+      </div>
+
+      <div class="footer">
+        <a href="http://thoppe.github.io/">project by travis hoppe</a>
+      </div>
+
+      
+      
     </div>
+
     
   </body>
 </html>
