@@ -38,7 +38,11 @@ class Features(object):
 
     def __init__(self,
                  f_features=_default_feature_file,
-                 f_vocab=_default_vocab_file):
+                 f_vocab=_default_vocab_file,
+                 empty=False):
+
+        if empty:
+            return None
 
         msg = "Loading feature file {}".format(f_features)
         logging.warning(msg)
@@ -48,6 +52,9 @@ class Features(object):
         logging.warning(msg)
         self.vocab = np.load(f_vocab)
 
+        self.reindex()
+
+    def reindex(self):
         self.index = dict(zip(range(len(self)), self.vocab))
         self.inv_index = dict(zip(self.index.values(), self.index.keys()))
 
