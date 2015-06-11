@@ -64,14 +64,16 @@ body {
 }
 
 ul {
+    
   list-style-type: none;
   margin: 0;
   padding: 0;
+  color: #444;
+  font: 200 20px/1.5 Goudy, Verdana, sans-serif;
 }
  
 li {
-  font: 200 20px/1.5 Goudy, Verdana, sans-serif;
-  border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
  
 li:last-child {
