@@ -35,8 +35,8 @@
 
     <form method=post>
       
-      {{ render_field(form.word1,placeholder="boy", autofocus=true) }}
-      {{ render_field(form.word2,placeholder="man") }}
+      {{ render_field(form.word1,placeholder="boy", autofocus=true, autocapitalize="none") }}
+      {{ render_field(form.word2,placeholder="man", autocapitalize="none") }}
 
     <button class="pure-button"
             onclick="compute_path()" id="compute_path">
@@ -44,8 +44,6 @@
 			translinguisticify
     </button>
     </form>
-
-    <p>   
 
       {# <h2>{{word1}}    {{word2}}</h2> #}
 

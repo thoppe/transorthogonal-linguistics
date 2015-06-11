@@ -10,6 +10,8 @@ import sys
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.INFO)
 
+_suggest_words = ["boy","man"]
+
 
 def bin_data(data, time, bins=12, max_x=1, min_x=0):
     items = []
@@ -32,17 +34,22 @@ from wtforms import Form, TextField, validators
 
 class WordInputForm(Form):
     msg_empty = 'Enter a word here'
-    req1 = validators.Required(message=msg_empty)
-    req2 = validators.Required(message=msg_empty)
-
+    #req1 = validators.Required(message=msg_empty)
+    #req2 = validators.Required(message=msg_empty)
+    #req1 = validators.Required(message=msg_empty)
+    #req2 = validators.Required(message=msg_empty)
+    
     def word_in_featureset(form, field):
-        msg_unknown = "Sorry! I don't know the word {}."
-        word = field.data.strip()
-        if not wp.validate_word(word, features):
+        msg_unknown = 'Sorry! I don\'t know the word "{}".'
+        try:
+            word = field.data.strip()
+        except:
+            word = ""
+        if word and not wp.validate_word(word, features):
             raise validators.ValidationError(msg_unknown.format(word))
 
-    word1 = TextField('word1', [req1, word_in_featureset])
-    word2 = TextField('word2', [req2, word_in_featureset])
+    word1 = TextField('word1', [word_in_featureset,])
+    word2 = TextField('word2', [word_in_featureset,])
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -55,11 +62,14 @@ def front_page():
         w1 = req["word1"][0].strip()
         w2 = req["word2"][0].strip()
     else:
-        w1, w2 = "boy", "man"
+        w1, w2 = _suggest_words
+
+    if not w1 or not w2:
+        w1, w2 = _suggest_words
 
     word_cutoff = 30
 
-    if form.validate():
+    if form.validate() or [w1,w2]==_suggest_words:
         result = wp.transorthogonal_words(w1, w2,
                                           features,
                                           word_cutoff)
