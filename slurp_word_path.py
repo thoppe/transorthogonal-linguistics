@@ -18,7 +18,7 @@ def build_local_features(w1,w2,features,
     local_features.reindex()
     return local_features
 
-def slerp_points(wa,wb,feat,slurp_n=10):
+def slerp_points(wa,wb,feat,slurp_n):
     ''' N-dimensional slerp interpolation '''
     va = feat[wa]
     vb = feat[wb]
@@ -33,21 +33,45 @@ def slerp_points(wa,wb,feat,slurp_n=10):
     
     return (SL.T / np.linalg.norm(SL,axis=1)).T
 
-def slerp_word_path(w0,w1,feat,slurp_n=15,vec_n=20):
+def slerp_word_path(w0,w1,feat,slurp_n=20):
 
-    vec_n += 1
-    T  = np.linspace(0,1,vec_n)
-
+    T  = np.linspace(0,1,slurp_n)
     SL = slerp_points(w0,w1,feat,slurp_n)
     WL = collections.defaultdict(dict)
 
-    for k,L in enumerate(SL):
-        t = float(k)/(SL.shape[0]-1)
-        #print "Computing SLURP {}".format(k)
+    GEO = []
 
+    for t,L in zip(T,SL):
         cosine_dist   = np.dot(feat.features, L)
         cosine_dist[cosine_dist>=1] = 1.0
         geodesic_dist = np.arccos(cosine_dist)
+
+        GEO.append(geodesic_dist)
+
+    GEO = np.vstack(GEO)
+    
+    print GEO.shape
+
+    # Only choose words that are closer to the path than an end point, e.g.
+    # ignore this situation:         (o)  (x)------(x)
+    # and accept this situtation:         (x)--o---(x)
+    MIN_IDX = np.argmin(GEO,axis=0)
+    CONCAVE_MASK = (MIN_IDX>0) & (MIN_IDX<slurp_n-1)
+
+    idx_concave = np.where(CONCAVE_MASK)[0]
+    vocab = [feat.index2word(idx) for idx in idx_concave]
+    dist  = geodesic_dist[CONCAVE_MASK]
+    time  = [T[idx] for idx in MIN_IDX[CONCAVE_MASK]]
+
+    print vocab[:20], dist[:20], time[:20]
+    exit()
+
+    return SL, vocab, dist, time
+
+    '''
+    while True:
+        print geodesic_dist
+        exit()
 
         best_idx  = np.argsort(geodesic_dist)[:slurp_n]
         
@@ -58,9 +82,14 @@ def slerp_word_path(w0,w1,feat,slurp_n=15,vec_n=20):
             word = feat.index2word(idx)
             WL[word][t] = geodesic_dist[idx]
 
-    return WL
+    return SL,WL
+    '''
 
-def refine_top_words(WL):#,full_features):
+def refine_top_words(SL,WL):
+
+    print WL
+    print SL
+    exit()
 
     TOP_WL = dict()
 
@@ -84,8 +113,9 @@ def refine_top_words(WL):#,full_features):
 w1,w2="fate","destiny"
 
 lf = build_local_features(w1,w2,features, n_local=3000)
-WL = slerp_word_path(w1,w2,lf,vec_n=20,slurp_n=50)
-df = refine_top_words(WL)
+SL,WL = slerp_word_path(w1,w2,lf)
+exit()
+#df = refine_top_words(SL,WL)
 
 for word in df.index:
 
