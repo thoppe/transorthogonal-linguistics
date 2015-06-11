@@ -11,6 +11,12 @@ input {
     font-family: 'Goudy', sans-serif;
     font-size: medium;
     vertical-align: middle;
+    margin-bottom:10px;
+}
+
+#compute_path {
+    color:red;
+    margin-bottom:10px;
 }
 
 body {

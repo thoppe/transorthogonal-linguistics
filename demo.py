@@ -46,7 +46,7 @@ class WordInputForm(Form):
 
 
 @app.route('/', methods=['GET', 'POST'])
-def font_page():
+def front_page():
 
     form = WordInputForm(request.form)
 
