@@ -10,6 +10,8 @@ If heroku is running, checkout the live demo (it may take awhile to warm up):
 
 With the input of `boy` and `man` we get:
 
+#### `boy` to `man`
+
     boy
  
     sixteen-year-old, orphan
@@ -24,11 +26,30 @@ With the input of `boy` and `man` we get:
     person
     man
 
+#### `sun` to `moon` 
+  
+    sun
+    sunlight, mist
+    glow, shine, clouds
+    skies, shines, shining, glare, moonlight, sky, darkness
+    shadows, heavens
+    horizon, crescent
+    earth, eclipses
+    constellations, comet, planets, orbits, orbiting, Earth, Io
+    Jupiter, planet, Venus, Pluto, Uranus, orbit
+  
+    moons, lunar
+    moon
+  
+
 Other interesting examples:
   
     girl woman
     lover sinner
     fate destiny
-    sun moon
-
+    god demon
+    good bad
+    mind body
+    heaven hell
+    
  
