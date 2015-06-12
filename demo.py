@@ -45,7 +45,7 @@ class WordInputForm(Form):
             word = field.data.strip()
         except:
             word = ""
-        if word and not wp.validate_word(word, features):
+        if word and not tol.validate_word(word, features):
             raise validators.ValidationError(msg_unknown.format(word))
 
     word1 = TextField('word1', [word_in_featureset,])
@@ -70,9 +70,9 @@ def front_page():
     word_cutoff = 30
 
     if form.validate() or [w1,w2]==_suggest_words:
-        result = wp.transorthogonal_words(w1, w2,
-                                          features,
-                                          word_cutoff)
+        result = tol.transorthogonal_words(w1, w2,
+                                           features,
+                                           word_cutoff)
         words, distance, time = result
 
         word_blocks = bin_data(words, time)
@@ -95,8 +95,8 @@ def front_page():
 
 
 # Load the feature set
-import word_path as wp
-features = wp.Features()
+import transorthogonal_linguistics as tol
+features = tol.Features()
 
 if __name__ == '__main__':
     app.debug = True
