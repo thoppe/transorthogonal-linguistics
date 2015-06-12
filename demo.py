@@ -55,6 +55,9 @@ class WordInputForm(Form):
 @app.route('/', methods=['GET', 'POST'])
 def front_page():
 
+    result_method = [tol.transorthogonal_words,
+                     tol.slerp_word_path][1]
+
     form = WordInputForm(request.form)
 
     if request.method == 'POST' and form.validate():
@@ -67,12 +70,13 @@ def front_page():
     if not w1 or not w2:
         w1, w2 = _suggest_words
 
-    word_cutoff = 30
+    word_cutoff = 35
 
     if form.validate() or [w1,w2]==_suggest_words:
-        result = tol.transorthogonal_words(w1, w2,
-                                           features,
-                                           word_cutoff)
+        result = result_method(w1, w2,
+                               features,
+                               word_cutoff=word_cutoff)
+        
         words, distance, time = result
 
         word_blocks = bin_data(words, time)
