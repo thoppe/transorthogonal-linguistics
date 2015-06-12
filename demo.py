@@ -57,6 +57,7 @@ def parse_front_page(result_method):
         req = dict(request.form)
         w1 = req["word1"][0].strip()
         w2 = req["word2"][0].strip()
+        _last_used_words = (w1,w2)
     else:
         w1, w2 = _last_used_words
 
@@ -82,11 +83,6 @@ def parse_front_page(result_method):
     args = {}
     args["word1"] = w1
     args["word2"] = w2
-
-    try:
-        _last_used_words = (w1,w2)
-    except:
-        pass
 
     logging.info("WORDS: {} {}".format(w1, w2))
 
@@ -119,5 +115,5 @@ import transorthogonal_linguistics as tol
 features = tol.Features()
 
 if __name__ == '__main__':
-    app.debug = True
+    app.debug = False
     app.run()
