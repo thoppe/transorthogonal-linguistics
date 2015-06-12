@@ -106,16 +106,24 @@ def transorthogonal_words(w1, w2, features, word_cutoff=25):
     D, T = closest_approach(x1, x2, W)
 
     close_idx = np.argsort(D)[:word_cutoff]
-    WORDS = np.array([features.index2word(idx) for idx in close_idx])
-    timeline = abs(T[close_idx])
+    vocab = np.array([features.index2word(idx) for idx in close_idx])
+    time = T[close_idx]
     dist = D[close_idx]
+    
+    # Fix occasional rounding error
+    time[time<0] = 0
+    dist[dist<0] = 0
 
-    chrono_idx = np.argsort(timeline)
+    chrono_idx = np.argsort(time)
 
-    return (WORDS[chrono_idx],
+    return (vocab[chrono_idx],
             dist[chrono_idx],
-            timeline[chrono_idx])
+            time[chrono_idx])
 
+
+def print_result(result):
+    for word, time, distance in zip(*result):
+        print "{:0.5f} {:0.3f} {}".format(time, distance, word)
 
 if __name__ == "__main__":
 
@@ -161,13 +169,13 @@ if __name__ == "__main__":
                         args.f_vocab)
 
     for k, (w1, w2) in enumerate(word_pairs):
-
+            
         result = transorthogonal_words(w1, w2,
                                        features,
                                        args.word_cutoff)
 
-        for word, time, distance in zip(*result):
-            print "{:0.5f} {:0.3f} {}".format(time, distance, word)
+        print_result(result)
 
-        if k:
-            print
+        if k: print
+
+
