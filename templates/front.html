@@ -32,23 +32,29 @@
       <div class="header">
         <a href="https://github.com/thoppe/transorthogonal-linguistics">
           transorthogonal linguistics
-        </a>
+        </a><a id="starlink"
+               style="color:{{starcolor}}"
+               href="/{{starlink}}">*</a>
       </div>
+     
 
       <div class="content">
 
-        <form method=post>
+        <form method=post class="pure-form">
           
-          {{ render_field(form.word1,placeholder="boy", autofocus=true, autocapitalize="none",
-          onfocus="this.focus();this.select()") }}
-          {{ render_field(form.word2,placeholder="man", autocapitalize="none")}}
+          {{ render_field(form.word1,placeholder="boy",
+                          autofocus=true, autocapitalize="none",
+                          onfocus="this.focus();this.select()") }}
+          {{ render_field(form.word2,placeholder="man",
+                          autocapitalize="none")}}
 
-
-          <button class="pure-button"
+          <button class="pure-button button-active"
                   onclick="compute_path()" id="compute_path">
             <i class="fa fa-connectdevelop"></i>
-			      translinguisticify
+			      {{buttontext}}
           </button>
+
+          
         </form>
 
         {# <h2>{{word1}}    {{word2}}</h2> #}

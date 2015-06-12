@@ -11,7 +11,7 @@ app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.INFO)
 
 _suggest_words = ["boy","man"]
-
+_last_used_words = _suggest_words
 
 def bin_data(data, time, bins=12, max_x=1, min_x=0):
     items = []
@@ -34,10 +34,6 @@ from wtforms import Form, TextField, validators
 
 class WordInputForm(Form):
     msg_empty = 'Enter a word here'
-    #req1 = validators.Required(message=msg_empty)
-    #req2 = validators.Required(message=msg_empty)
-    #req1 = validators.Required(message=msg_empty)
-    #req2 = validators.Required(message=msg_empty)
     
     def word_in_featureset(form, field):
         msg_unknown = 'Sorry! I don\'t know the word "{}".'
@@ -52,12 +48,9 @@ class WordInputForm(Form):
     word2 = TextField('word2', [word_in_featureset,])
 
 
-@app.route('/', methods=['GET', 'POST'])
-def front_page():
-
-    result_method = [tol.transorthogonal_words,
-                     tol.slerp_word_path][1]
-
+def parse_front_page(result_method):
+    global _last_used_words
+    
     form = WordInputForm(request.form)
 
     if request.method == 'POST' and form.validate():
@@ -65,7 +58,7 @@ def front_page():
         w1 = req["word1"][0].strip()
         w2 = req["word2"][0].strip()
     else:
-        w1, w2 = _suggest_words
+        w1, w2 = _last_used_words
 
     if not w1 or not w2:
         w1, w2 = _suggest_words
@@ -90,12 +83,35 @@ def front_page():
     args["word1"] = w1
     args["word2"] = w2
 
+    try:
+        _last_used_words = (w1,w2)
+    except:
+        pass
+
     logging.info("WORDS: {} {}".format(w1, w2))
 
     args["result_list"] = result
     args["form"] = form
 
+    return args
+
+
+@app.route('/', methods=['GET', 'POST'])
+def front_page():
+    args = parse_front_page(tol.transorthogonal_words)
+    args["starlink"] = "slerp"
+    args["starcolor"] = "inherit"
+    args["buttontext"] = "transorthogonal path"
     return flask.render_template('front.html', **args)
+
+@app.route('/slerp', methods=['GET', 'POST'])
+def slerp_page():
+    args = parse_front_page(tol.slerp_word_path)
+    args["starlink"] = ""
+    args["starcolor"] = "blue"
+    args["buttontext"] = "SLERP path"
+    return flask.render_template('front.html', **args)
+
 
 
 # Load the feature set
