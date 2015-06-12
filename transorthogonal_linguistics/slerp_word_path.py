@@ -76,15 +76,54 @@ def slerp_word_path(w0,w1,features,
 
 
 
-#w1,w2 = "run","walk"
-#w1,w2="teacher","scientist"
-#w1,w2="fate","destiny"
+if __name__ == "__main__":
 
+    import argparse
 
+    desc = '''
+    transorthogonal words (using slerp)
 
-features = wp.Features()
-w0,w1 = "boy","man"
+    Moves across the sphere spanned by the orthogonal space,
+    only local words are considered by original transorthogonal function.
+    Interesting cases: boy man mind body fate destiny
+    teacher scientist girl woman conservative liberal
+    hard soft religion rationalism
+    '''
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument("--f_features",
+                        help="numpy feature matrix",
+                        default=wp._default_feature_file)
+    parser.add_argument("--f_vocab",
+                        help="numpy vocab vector",
+                        default=wp._default_vocab_file)
+    parser.add_argument("--word_cutoff", '-c',
+                        help="Number of words to select",
+                        type=int, default=25)
+    parser.add_argument("--slerp_n", '-s',
+                        help="Number of interpolating slerp points",
+                        type=int, default=25)
+    parser.add_argument("words",
+                        nargs="*",
+                        help="Space separated pairs of words example: "
+                        "python word_path.py boy man mind body")
 
-result = slerp_word_path(w0, w1, features, word_cutoff=25)
+    args = parser.parse_args()
 
-wp.print_result(result)
+    if not args.words:
+        msg = "You must either pick at least two words!"
+        raise SyntaxError(msg)
+
+    if len(args.words) % 2 != 0:
+        msg = "You input an even number of words!"
+        raise SyntaxError(msg)
+
+    word_pairs = [[w1, w2] for w1, w2 in zip(args.words[::2],
+                                             args.words[1::2])]
+    
+    features = wp.Features()
+
+    for k, (w0, w1) in enumerate(word_pairs):
+        result = slerp_word_path(w0, w1, features, word_cutoff=25)
+        wp.print_result(result)
+        if k:
+            print
