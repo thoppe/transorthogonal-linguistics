@@ -6,11 +6,12 @@ If heroku is running, checkout the live demo (it may take 30 seconds to warm up)
    
 [https://transorthogonal-linguistics.herokuapp.com/](https://transorthogonal-linguistics.herokuapp.com/)
 
-
+### Introduction
+  
 Words rarely exist in a vacuum.
 To understand the meaning of `cat`,
   it's useful to know that it _is_ ([hypernym](https://en.wikipedia.org/wiki/Hyponymy_and_hypernymy)) an animal,
-  that it is _the same as_ ([synonym](https://en.wikipedia.org/?title=Synonym)) a feline,
+  that it  _is the same as_ ([synonym](https://en.wikipedia.org/?title=Synonym)) a feline,
   that a Tabby is _a type of_ ([hyponym](https://en.wikipedia.org/wiki/Hyponymy_and_hypernymy)) cat,
   and that in some reasonable sense it is the _opposite_ ([antonym](https://en.wikipedia.org/wiki/Opposite_(semantics))) of a dog.
 
@@ -18,20 +19,24 @@ Instead of looking at a single word in isolation, this project tries elucidate w
 
 Grouping words together is a classic problem in computational linguisitics.
 Typical approaches use [LSA](https://en.wikipedia.org/wiki/Latent_semantic_analysis), [LSI](https://en.wikipedia.org/wiki/Latent_semantic_indexing), [LDA](https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation) or [Pachinko allocation](https://en.wikipedia.org/wiki/Pachinko_allocation).
-Personally, I perfer [Word2Vec](https://code.google.com/p/word2vec/) by some lovely engineers from Google. Partley because there exists an excellent port to Python via [gensim](https://radimrehurek.com/gensim/models/word2vec.html), but mostly because it's awesome.
+Personally, I perfer [Word2Vec](https://code.google.com/p/word2vec/) which was developed by some lovely engineers from Google. Partly because there exists an excellent port to Python via [gensim](https://radimrehurek.com/gensim/models/word2vec.html), but mostly because it's awesome.
 
   Word2Vec maps each word to a point on a unit [hypersphere](http://mathworld.wolfram.com/Hypersphere.html).
-  Words that are "[close](https://en.wikipedia.org/wiki/Cosine_similarity)" on this sphere very often share some kind of semantic relation.  
-  If we pick two words, say "boy" and "man" we can trace the shortest [path](https://en.wikipedia.org/?title=Geodesic) that connects them.
+  Words that are "[close](https://en.wikipedia.org/wiki/Cosine_similarity)" on this sphere often share some kind of semantic relation.
+  If we pick two words, say "boy" and "man", we can trace the shortest [path](https://en.wikipedia.org/?title=Geodesic) that connects them.
   We parameterize this curve with a "time" where t=0 (at boy) and t=1 (at man).
   Words that are close to this timeline are selected and ordered by their t value (e.g. to the t where they are closest to the connecting curve).
-  In theory, this timeline should be a semantic map from one word to another -- smoothly variaring across meaning.
+  In theory, this timeline should be a semantic map from one word to another -- smoothly varying across meaning.
 
-  In practice however, it turns out that computing the true curve across the hypersphere is rather tricky, and even harder to find the nearest points computationally.
-  However if we cheat a little we can draw a straight line connecting the two points. If we do this, the problem reduces down to a fast linear algebra solution.
-  Since we are moving across (trans) the orthogonal space spanned by the word2vec's construction, we call this method **transorthogonal_linguistics**.
-  The database contained within this repo was constructed from a full English dump of Wikipedia, sentence and word tokenized by NLTK.
-  Word2Vec training was done with a single pass, 300 dimensions and an 800 minimum vocabulary count for a word to be present in the construction.
+  In practice however, it turns out that computing the true curve across the hypersphere is rather tricky. It's even harder to numerically find the nearest points efficiently.
+  However if we cheat a little, we can draw a straight line connecting the two points as an approximation to the curve.
+  If we do this, the problem reduces down to a fast linear algebra solution.
+  Since we are moving across (trans) the orthogonal space spanned by the word2vec's construction, we call this method **transorthogonal linguistics**.
+
+### Data construction
+  
+  The database contained within this repo was constructed from a full English dump of Wikipedia that was sentence and word tokenized by [NLTK](http://www.nltk.org/).
+  Word2Vec training was done with a single pass, 300 dimensions and an 800 minimum vocabulary count.
   These choices were found to be optimal for the results, yet still be small enough to query online reasonably quickly.
 
 ### Command-line interface
