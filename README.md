@@ -9,11 +9,12 @@ If heroku is running, checkout the live demo (it may take 30 seconds to warm up)
 ### Introduction
   
 Words rarely exist in a vacuum.
-To understand the meaning of `cat`,
+To understand the meaning of the word cat,
   it's useful to know that it _is_ ([hypernym](https://en.wikipedia.org/wiki/Hyponymy_and_hypernymy)) an animal,
   that it  _is the same as_ ([synonym](https://en.wikipedia.org/?title=Synonym)) a feline,
   that a Tabby is _a type of_ ([hyponym](https://en.wikipedia.org/wiki/Hyponymy_and_hypernymy)) cat,
   and that in some reasonable sense it is the _opposite_ ([antonym](https://en.wikipedia.org/wiki/Opposite_(semantics))) of a dog.
+  Since words are connected in a rich network of linguisitic information, why not (literally) follow that path and see where it takes us?
 
 Instead of looking at a single word in isolation, this project tries elucidate what words should be _in between_ a start and end word.
 
