@@ -7,8 +7,12 @@ app = flask.Flask(__name__)
 
 import logging
 import sys
+import datetime
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.INFO)
+
+# Log the queries separately
+F_QUERY_LOG = open("log_word_query.txt",'a')
 
 _suggest_words = ["boy","man"]
 _last_used_words = _suggest_words
@@ -84,7 +88,11 @@ def parse_front_page(result_method):
     args["word1"] = w1
     args["word2"] = w2
 
-    logging.info("WORDS: {} {}".format(w1, w2))
+    log_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    log_text = "QUERY {} {} {}".format(log_time, w1, w2)
+    logging.info(log_text)
+    F_QUERY_LOG.write(log_text+'\n')
+    F_QUERY_LOG.flush()
 
     args["result_list"] = result
     args["form"] = form

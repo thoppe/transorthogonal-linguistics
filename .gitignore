@@ -1,8 +1,10 @@
 # Temp files
 *~
+\#*\#
 
-# Log file
+# Log files
 wordlog.txt
+log_word_query.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
