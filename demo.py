@@ -72,8 +72,7 @@ def parse_front_page(result_method):
 
     if form.validate() or [w1,w2]==_suggest_words:
         result = result_method(w1, w2,
-                               features,
-                               word_cutoff=word_cutoff)
+                               features)
         
         words, distance, time = result
 
