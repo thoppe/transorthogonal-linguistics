@@ -26,9 +26,9 @@ def slerp_points(x0,x1,slerp_n):
     return (SL.T / np.linalg.norm(SL,axis=1)).T
 
 def slerp_word_path(w0,w1,features,
+                    threshold_cutoff=1.1,
                     slerp_n=20,
-                    word_cutoff=35,
-                    n_local=3000):
+                    n_local=5000):
 
     lf = build_local_features(w0,w1,features,n_local)
 
@@ -57,11 +57,19 @@ def slerp_word_path(w0,w1,features,
     dist  = geodesic_dist[CONCAVE_MASK]
     time  = np.array([T[idx] for idx in MIN_IDX[CONCAVE_MASK]])
 
-    top_idx = np.argsort(dist)[:word_cutoff]
-    vocab = vocab[top_idx]
-    time  = time [top_idx]
-    dist  = dist [top_idx]
+    # Limit results to this many
+    total_word_cut = 50
 
+    top_idx = np.argsort(dist)
+    vocab = vocab[top_idx][:total_word_cut]
+    time  = time [top_idx][:total_word_cut]
+    dist  = dist [top_idx][:total_word_cut]
+
+    threshold_idx = dist<threshold_cutoff
+    vocab = vocab[threshold_idx]
+    time  = time [threshold_idx]
+    dist  = dist [threshold_idx]    
+    
     chrono_idx = np.argsort(time)
     vocab = vocab[chrono_idx]
     time  = time [chrono_idx]
@@ -96,9 +104,9 @@ if __name__ == "__main__":
     parser.add_argument("--f_vocab",
                         help="numpy vocab vector",
                         default=wp._default_vocab_file)
-    parser.add_argument("--word_cutoff", '-c',
-                        help="Number of words to select",
-                        type=int, default=25)
+    parser.add_argument("--threshold_cutoff", '-c',
+                        help="Distance cutoff",
+                        type=float, default=1.05)
     parser.add_argument("--slerp_n", '-s',
                         help="Number of interpolating slerp points",
                         type=int, default=25)
@@ -123,7 +131,9 @@ if __name__ == "__main__":
     features = wp.Features()
 
     for k, (w0, w1) in enumerate(word_pairs):
-        result = slerp_word_path(w0, w1, features, word_cutoff=25)
+        result = slerp_word_path(w0, w1, features,
+                                 slerp_n=args.slerp_n,
+                                 threshold_cutoff=args.threshold_cutoff)
         wp.print_result(result)
         if k:
             print
