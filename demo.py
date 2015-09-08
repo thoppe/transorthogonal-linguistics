@@ -56,7 +56,6 @@ class WordInputForm(Form):
 def compute_results(w1,w2,result_method):
     
     word_cutoff = 35
-
     result = result_method(w1, w2, features,
                            word_cutoff=word_cutoff)
 
@@ -111,7 +110,7 @@ def TOL_results(w1,w2):
 
     args = compute_results(w1,w2,result_method)
     args["form"] = form
-    args["starlink"] = "TOL_SLERP"
+    args["starlink"] = "TOL_SLERP/{}/{}".format(w1,w2)
     args["starcolor"] = "inherit"
     args["buttontext"] = "transorthogonal path"
 
@@ -137,7 +136,7 @@ def TOL_SLERP_results(w1,w2):
     args = compute_results(w1,w2,result_method)
     args["form"] = form
 
-    args["starlink"] = "TOL"
+    args["starlink"] = "TOL/{}/{}".format(w1,w2)
     args["starcolor"] = "blue"
     args["buttontext"] = "SLERP path"
 
