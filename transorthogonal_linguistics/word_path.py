@@ -3,14 +3,25 @@ from pathlib import Path
 
 import numpy as np
 
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent
-_default_feature_file = str(_PROJECT_ROOT / "db" / "features.npy")
-_default_vocab_file = str(_PROJECT_ROOT / "db" / "vocab.npy")
+_MODULE_ROOT = Path(__file__).resolve().parent
+_default_feature_file = str(_MODULE_ROOT / "data" / "features.npy")
+_default_vocab_file = str(_MODULE_ROOT / "data" / "vocab.npy")
 
 
 def validate_word(w, features):
     # Returns true if the word exists
     return w in features.inv_index
+
+
+def missing_words(words, features):
+    return [word for word in words if not validate_word(word, features)]
+
+
+def ensure_words_exist(words, features):
+    missing = missing_words(words, features)
+    if missing:
+        quoted = ", ".join(repr(word) for word in missing)
+        raise ValueError(f"Unknown word(s): {quoted}")
 
 
 def save_features(f_features="db/features.word2vec"):
@@ -101,6 +112,7 @@ def closest_approach(x1, x2, W):
 
 
 def transorthogonal_words(w1, w2, features, word_cutoff=25):
+    ensure_words_exist((w1, w2), features)
 
     W = features.features
     x1 = features[w1]
@@ -176,10 +188,12 @@ def main(argv=None):
                         args.f_vocab)
 
     for k, (w1, w2) in enumerate(word_pairs):
-            
-        result = transorthogonal_words(w1, w2,
-                                       features,
-                                       args.word_cutoff)
+        try:
+            result = transorthogonal_words(w1, w2,
+                                           features,
+                                           args.word_cutoff)
+        except ValueError as exc:
+            parser.error(str(exc))
 
         print_result(result)
 

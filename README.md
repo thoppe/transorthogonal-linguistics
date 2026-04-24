@@ -67,7 +67,7 @@ python -m pytest -q
 ```
 
 Known current scope:
-- bundled `.npy` data files are treated as the canonical local fixture
+- bundled `.npy` data files under `transorthogonal_linguistics/data/` are treated as the canonical local fixture
 - there is no active web deployment in this repository
 - the first modernization pass focuses on Python 3 compatibility and harness coverage
 

@@ -23,3 +23,6 @@ dev = [
 
 [tool.setuptools]
 packages = ["transorthogonal_linguistics"]
+
+[tool.setuptools.package-data]
+transorthogonal_linguistics = ["data/*.npy"]

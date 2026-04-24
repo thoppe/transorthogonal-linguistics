@@ -4,7 +4,7 @@
 
 Repository contents observed at start:
 - Python package: `transorthogonal_linguistics/`
-- Data assets: `db/features.npy`, `db/vocab.npy`
+- Data assets: `transorthogonal_linguistics/data/features.npy`, `transorthogonal_linguistics/data/vocab.npy`
 - Root docs and metadata: `README.md`, `requirements.txt`
 
 Current code characteristics:
@@ -45,8 +45,8 @@ The repository currently appears to support three user-facing capabilities:
 ## Data Contract
 
 Assumed invariants for the bundled data:
-- `db/features.npy` is a 2D NumPy array of embedding vectors.
-- `db/vocab.npy` is a 1D NumPy array of tokens aligned by row index with `features.npy`.
+- `transorthogonal_linguistics/data/features.npy` is a 2D NumPy array of embedding vectors.
+- `transorthogonal_linguistics/data/vocab.npy` is a 1D NumPy array of tokens aligned by row index with `features.npy`.
 - The code relies on index alignment between those two arrays.
 
 These assumptions must be validated by the harness before depending on them.

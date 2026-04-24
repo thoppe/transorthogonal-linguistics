@@ -32,6 +32,7 @@ def slerp_word_path(w0,w1,features,
                     threshold_cutoff=1.1,
                     slerp_n=20,
                     n_local=5000):
+    wp.ensure_words_exist((w0, w1), features)
 
     lf = build_local_features(w0,w1,features,n_local)
 
@@ -135,9 +136,12 @@ def main(argv=None):
     features = wp.Features()
 
     for k, (w0, w1) in enumerate(word_pairs):
-        result = slerp_word_path(w0, w1, features,
-                                 slerp_n=args.slerp_n,
-                                 threshold_cutoff=args.threshold_cutoff)
+        try:
+            result = slerp_word_path(w0, w1, features,
+                                     slerp_n=args.slerp_n,
+                                     threshold_cutoff=args.threshold_cutoff)
+        except ValueError as exc:
+            parser.error(str(exc))
         wp.print_result(result)
         if k:
             print()

@@ -4,6 +4,8 @@ import sys
 import numpy as np
 
 from transorthogonal_linguistics import Features
+from transorthogonal_linguistics import ensure_words_exist
+from transorthogonal_linguistics import missing_words
 from transorthogonal_linguistics import slerp_word_path
 from transorthogonal_linguistics import transorthogonal_words
 from transorthogonal_linguistics import validate_word
@@ -35,6 +37,8 @@ def test_known_words_exist():
 
 def test_package_exports_are_available():
     assert callable(Features)
+    assert callable(missing_words)
+    assert callable(ensure_words_exist)
     assert callable(transorthogonal_words)
     assert callable(slerp_word_path)
     assert callable(validate_word)
@@ -82,3 +86,35 @@ def test_module_entrypoint_runs_without_runtime_warning():
     assert "RuntimeWarning" not in result.stderr
     assert "boy" in result.stdout
     assert "man" in result.stdout
+
+
+def test_missing_words_helpers_and_api_error():
+    features = Features()
+
+    assert missing_words(["boy", "not-a-real-word"], features) == ["not-a-real-word"]
+
+    try:
+        ensure_words_exist(["boy", "not-a-real-word"], features)
+    except ValueError as exc:
+        assert "not-a-real-word" in str(exc)
+    else:
+        raise AssertionError("ensure_words_exist should raise for missing vocabulary")
+
+    try:
+        transorthogonal_words("boy", "not-a-real-word", features)
+    except ValueError as exc:
+        assert "not-a-real-word" in str(exc)
+    else:
+        raise AssertionError("transorthogonal_words should raise ValueError for missing words")
+
+
+def test_cli_reports_unknown_words_cleanly():
+    result = subprocess.run(
+        [sys.executable, "-m", "transorthogonal_linguistics.word_path", "boy", "not-a-real-word"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode != 0
+    assert "Unknown word(s): 'not-a-real-word'" in result.stderr
