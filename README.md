@@ -65,6 +65,13 @@ python -m pip install -e .[dev]
 python -m pytest -q
 ```
 
+Run the Streamlit mockup:
+
+```bash
+python -m pip install -e .[app]
+streamlit run streamlit_app.py
+```
+
 Known current scope:
 - bundled `.npy` data files under `transorthogonal_linguistics/data/` are treated as the canonical local fixture
 - there is no active web deployment in this repository

@@ -20,6 +20,10 @@ transorthogonal-slerp = "transorthogonal_linguistics.slerp_word_path:main"
 dev = [
     "pytest",
 ]
+app = [
+    "pandas",
+    "streamlit",
+]
 
 [tool.setuptools]
 packages = ["transorthogonal_linguistics"]
