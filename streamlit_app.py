@@ -288,6 +288,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+st.caption("Open the sidebar to change the start and end words.")
 
 query_start_word = get_query_param("start", "boy").strip()
 query_end_word = get_query_param("end", "man").strip()
