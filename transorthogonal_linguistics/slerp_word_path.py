@@ -121,6 +121,11 @@ def build_parser():
         default="text",
         help="output format",
     )
+    parser.add_argument(
+        "--log-level",
+        choices=("DEBUG", "INFO", "WARNING", "ERROR"),
+        help="enable logging at the selected level",
+    )
     parser.add_argument("words",
                         nargs="*",
                         metavar="WORD",
@@ -131,6 +136,7 @@ def build_parser():
 def main(argv=None):
     parser = build_parser()
     args = parser.parse_args(argv)
+    wp.configure_logging(args.log_level)
 
     if not args.words:
         parser.error("expected at least one pair of input words")

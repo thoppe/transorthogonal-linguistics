@@ -87,6 +87,7 @@ def test_module_entrypoint_runs_without_runtime_warning():
     )
 
     assert "RuntimeWarning" not in result.stderr
+    assert "Loading feature file" not in result.stderr
     assert "boy" in result.stdout
     assert "man" in result.stdout
 
@@ -169,3 +170,24 @@ def test_cli_supports_json_output():
     assert isinstance(payload, list)
     assert payload
     assert {"word", "distance", "time"} <= set(payload[0])
+
+
+def test_cli_supports_opt_in_logging():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "transorthogonal_linguistics.word_path",
+            "--log-level",
+            "INFO",
+            "boy",
+            "man",
+        ],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    assert "Loading feature file" in result.stderr
+    assert "Loading vocab file" in result.stderr

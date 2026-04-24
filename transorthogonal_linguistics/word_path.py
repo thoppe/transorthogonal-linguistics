@@ -12,6 +12,7 @@ except ImportError:  # pragma: no cover - supports direct script execution
 _MODULE_ROOT = Path(__file__).resolve().parent
 _default_feature_file = str(_MODULE_ROOT / "data" / "features.npy")
 _default_vocab_file = str(_MODULE_ROOT / "data" / "vocab.npy")
+_LOGGER = logging.getLogger(__name__)
 
 
 def validate_word(w, features):
@@ -40,14 +41,14 @@ def save_features(f_features="db/features.word2vec"):
 
     np.save(_default_feature_file,
             features.syn0)
-    logging.info("Saved features {}".format(_default_feature_file))
+    _LOGGER.info("Saved features %s", _default_feature_file)
 
     features.init_sims()
     vocab_n = len(features.vocab.keys())
     words = np.array([features.index2word[n] for n in range(0, vocab_n)])
     np.save(_default_vocab_file, words)
 
-    logging.info("Saved vocab {}".format(_default_feature_file))
+    _LOGGER.info("Saved vocab %s", _default_vocab_file)
 
 
 class Features(object):
@@ -64,12 +65,10 @@ class Features(object):
         if empty:
             return None
 
-        msg = "Loading feature file {}".format(f_features)
-        logging.warning(msg)
+        _LOGGER.info("Loading feature file %s", f_features)
         self.features = np.load(f_features)
 
-        msg = "Loading vocab file {}".format(f_vocab)
-        logging.warning(msg)
+        _LOGGER.info("Loading vocab file %s", f_vocab)
         self.vocab = np.load(f_vocab)
 
         self.reindex()
@@ -167,6 +166,13 @@ def emit_result(result, output_format):
     print_result(result)
 
 
+def configure_logging(log_level):
+    if not log_level:
+        return
+
+    logging.basicConfig(level=getattr(logging, log_level))
+
+
 def build_parser():
     import argparse
 
@@ -199,6 +205,11 @@ def build_parser():
         default="text",
         help="output format",
     )
+    parser.add_argument(
+        "--log-level",
+        choices=("DEBUG", "INFO", "WARNING", "ERROR"),
+        help="enable logging at the selected level",
+    )
     parser.add_argument("words",
                         nargs="*",
                         metavar="WORD",
@@ -209,6 +220,7 @@ def build_parser():
 def main(argv=None):
     parser = build_parser()
     args = parser.parse_args(argv)
+    configure_logging(args.log_level)
 
     if not args.words:
         parser.error("expected at least one pair of input words")
