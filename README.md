@@ -3,7 +3,8 @@ _[Travis Hoppe](http://thoppe.github.io/)_
 
 Modernization status:
 - Baseline project date: `2015-06-26`
-- Current codebase is being modernized from that historical Python 2 snapshot
+- Current codebase has been modernized forward from that historical Python 2 snapshot
+- A local Streamlit UI has been added on top of the original CLI workflows
 - The active modernization contracts live in `docs/`
 
 ### Introduction
@@ -71,6 +72,11 @@ Run the Streamlit mockup:
 python -m pip install -e .[app]
 streamlit run streamlit_app.py
 ```
+
+Current repo state:
+- original word-path CLI behavior is still present
+- the Python 2-era codebase has been updated for modern Python
+- a local UI was added for interactive exploration of result paths
 
 Known current scope:
 - bundled `.npy` data files under `transorthogonal_linguistics/data/` are treated as the canonical local fixture
