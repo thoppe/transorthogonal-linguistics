@@ -20,6 +20,13 @@ EXAMPLE_PAIRS = [
 
 GITHUB_URL = "https://github.com/thoppe/transorthogonal-linguistics"
 HOMEPAGE_URL = "http://thoppe.github.io/"
+DEFAULT_METHOD = "Slerp"
+DEFAULT_WORD_CUTOFF = 25
+METHOD_QUERY_VALUES = {
+    "Slerp": "slerp",
+    "Straight Line": "straight-line",
+}
+QUERY_METHOD_VALUES = {value: key for key, value in METHOD_QUERY_VALUES.items()}
 
 
 @st.cache_resource(show_spinner=False)
@@ -46,7 +53,45 @@ def apply_selected_example():
     start_word, end_word = st.session_state.selected_pair
     st.session_state.start_word = start_word
     st.session_state.end_word = end_word
-    st.session_state.auto_trace = True
+
+
+def get_query_param(name: str, default: str = "") -> str:
+    value = st.query_params.get(name, default)
+    if isinstance(value, list):
+        return value[0] if value else default
+    return value
+
+
+def parse_word_cutoff(value: str) -> int:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return DEFAULT_WORD_CUTOFF
+
+    return min(50, max(10, parsed))
+
+
+def initial_selected_pair(start_word: str, end_word: str):
+    pair = (start_word, end_word)
+    if pair in EXAMPLE_PAIRS:
+        return pair
+    return EXAMPLE_PAIRS[0]
+
+
+def sync_query_params(start_word: str, end_word: str, method: str, word_cutoff: int):
+    params = {}
+    if start_word:
+        params["start"] = start_word
+    if end_word:
+        params["end"] = end_word
+    if method != DEFAULT_METHOD:
+        params["method"] = METHOD_QUERY_VALUES[method]
+    if word_cutoff != DEFAULT_WORD_CUTOFF:
+        params["limit"] = str(word_cutoff)
+
+    st.query_params.clear()
+    for key, value in params.items():
+        st.query_params[key] = value
 
 
 st.set_page_config(
@@ -72,18 +117,37 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+query_start_word = get_query_param("start", "boy").strip()
+query_end_word = get_query_param("end", "man").strip()
+query_method = QUERY_METHOD_VALUES.get(get_query_param("method"), DEFAULT_METHOD)
+query_word_cutoff = parse_word_cutoff(get_query_param("limit", str(DEFAULT_WORD_CUTOFF)))
+
+st.session_state.setdefault("start_word", query_start_word)
+st.session_state.setdefault("end_word", query_end_word)
+st.session_state.setdefault("path_method", query_method)
+st.session_state.setdefault("word_cutoff", query_word_cutoff)
+st.session_state.setdefault(
+    "selected_pair",
+    initial_selected_pair(query_start_word, query_end_word),
+)
+
 with st.sidebar:
     start_word = st.text_input("Start word", key="start_word").strip()
     end_word = st.text_input("End word", key="end_word").strip()
     method_col, cutoff_col = st.columns(2)
     with method_col:
-        method = st.radio("Path method", ["Straight Line", "Slerp"], index=0)
+        method = st.radio("Path method", ["Slerp", "Straight Line"], key="path_method")
     with cutoff_col:
-        word_cutoff = st.slider("Result limit", min_value=10, max_value=50, value=25, step=5)
+        word_cutoff = st.slider(
+            "Result max limit",
+            min_value=10,
+            max_value=50,
+            step=5,
+            key="word_cutoff",
+        )
     selected_pair = st.selectbox(
         "Quick examples",
         EXAMPLE_PAIRS,
-        index=0,
         key="selected_pair",
         on_change=apply_selected_example,
         format_func=lambda pair: f"{pair[0]} → {pair[1]}",
@@ -102,11 +166,7 @@ with st.sidebar:
 
 features = load_features()
 
-default_start, default_end = selected_pair
-st.session_state.setdefault("start_word", default_start)
-st.session_state.setdefault("end_word", default_end)
-st.session_state.setdefault("auto_trace", True)
-st.session_state.pop("auto_trace", False)
+sync_query_params(start_word, end_word, method, word_cutoff)
 
 if not start_word or not end_word:
     st.info("Pick a pair from the sidebar or type your own words in the sidebar inputs.")
