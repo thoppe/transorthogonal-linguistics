@@ -1,8 +1,11 @@
 import logging
+from pathlib import Path
+
 import numpy as np
 
-_default_feature_file = "db/features.npy"
-_default_vocab_file = "db/vocab.npy"
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+_default_feature_file = str(_PROJECT_ROOT / "db" / "features.npy")
+_default_vocab_file = str(_PROJECT_ROOT / "db" / "vocab.npy")
 
 
 def validate_word(w, features):
@@ -12,8 +15,8 @@ def validate_word(w, features):
 
 def save_features(f_features="db/features.word2vec"):
     # Helper function to convert gensim -> numpy
-    import cPickle as _pickle
-    with open(f_features) as FIN:
+    import pickle as _pickle
+    with open(f_features, "rb") as FIN:
         features = _pickle.load(FIN)
 
     features.syn0 = np.load(f_features + ".syn0.npy")
@@ -24,7 +27,7 @@ def save_features(f_features="db/features.word2vec"):
 
     features.init_sims()
     vocab_n = len(features.vocab.keys())
-    words = np.array([features.index2word[n] for n in xrange(0, vocab_n)])
+    words = np.array([features.index2word[n] for n in range(0, vocab_n)])
     np.save(_default_vocab_file, words)
 
     logging.info("Saved vocab {}".format(_default_feature_file))
@@ -123,7 +126,7 @@ def transorthogonal_words(w1, w2, features, word_cutoff=25):
 
 def print_result(result):
     for word, time, distance in zip(*result):
-        print "{:0.5f} {:0.3f} {}".format(time, distance, word)
+        print("{:0.5f} {:0.3f} {}".format(time, distance, word))
 
 if __name__ == "__main__":
 
@@ -176,6 +179,5 @@ if __name__ == "__main__":
 
         print_result(result)
 
-        if k: print
-
-
+        if k:
+            print()

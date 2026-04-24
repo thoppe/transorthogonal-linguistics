@@ -1,6 +1,10 @@
 import collections
 import numpy as np
-import word_path as wp
+
+try:
+    from . import word_path as wp
+except ImportError:  # pragma: no cover - supports direct script execution
+    import word_path as wp
 
 def build_local_features(w0,w1,features,n_local):
     local_features = wp.Features(empty=True)
@@ -136,4 +140,4 @@ if __name__ == "__main__":
                                  threshold_cutoff=args.threshold_cutoff)
         wp.print_result(result)
         if k:
-            print
+            print()

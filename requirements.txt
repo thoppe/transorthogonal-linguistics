@@ -1,2 +1,1 @@
-numpy==1.9.2
-wheel==0.24.0
+numpy
