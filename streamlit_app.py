@@ -100,19 +100,53 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("Transorthogonal Linguistics")
-st.caption(
-    "Explore the words that lie in between a start and end word along a semantic path in the bundled embedding space."
-)
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Mono:wght@400&family=Source+Sans+3:wght@400;600&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: "Source Sans 3", sans-serif;
+    }
+
+    .app-title {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 3.2rem;
+        line-height: 0.95;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.35rem 0;
+    }
+
+    .app-caption {
+        font-family: "Source Sans 3", sans-serif;
+        font-size: 1.05rem;
+        max-width: 48rem;
+        margin: 0 0 1.25rem 0;
+        color: inherit;
+        opacity: 0.8;
+    }
+
     div[data-testid="stVerticalBlock"] div[data-testid="stHorizontalBlock"] p {
         margin-top: 0.1rem;
         margin-bottom: 0.1rem;
         line-height: 1.1;
     }
+
+    div[data-testid="stHorizontalBlock"] p {
+        font-family: "IBM Plex Mono", monospace;
+    }
     </style>
+    """,
+    unsafe_allow_html=True,
+)
+st.markdown(
+    """
+    <div class="app-title">Transorthogonal Linguistics</div>
+    <div class="app-caption">
+        Explore the words that lie in between a start and end word along a semantic path
+        in the bundled embedding space.
+    </div>
     """,
     unsafe_allow_html=True,
 )
