@@ -61,7 +61,6 @@ transorthogonal-slerp boy man
 Minimal local setup:
 
 ```bash
-python -m pip install -r requirements.txt
 python -m pip install -e .[dev]
 python -m pytest -q
 ```

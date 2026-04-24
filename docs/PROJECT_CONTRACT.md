@@ -5,7 +5,7 @@
 Repository contents observed at start:
 - Python package: `transorthogonal_linguistics/`
 - Data assets: `transorthogonal_linguistics/data/features.npy`, `transorthogonal_linguistics/data/vocab.npy`
-- Root docs and metadata: `README.md`, `requirements.txt`
+- Root docs and metadata: `README.md`, `pyproject.toml`
 
 Current code characteristics:
 - Written for Python 2.
