@@ -1,4 +1,3 @@
-import collections
 import numpy as np
 
 try:
@@ -58,7 +57,7 @@ def slerp_word_path(w0,w1,features,
 
     idx_concave = np.where(CONCAVE_MASK)[0]
     vocab = np.array([lf.index2word(idx) for idx in idx_concave])
-    dist  = geodesic_dist[CONCAVE_MASK]
+    dist  = GEO[MIN_IDX[idx_concave], idx_concave]
     time  = np.array([T[idx] for idx in MIN_IDX[CONCAVE_MASK]])
 
     # Limit results to this many
@@ -86,10 +85,7 @@ def slerp_word_path(w0,w1,features,
 
     return (vocab, dist, time)
 
-
-
-if __name__ == "__main__":
-
+def build_parser():
     import argparse
 
     desc = '''
@@ -118,8 +114,12 @@ if __name__ == "__main__":
                         nargs="*",
                         help="Space separated pairs of words example: "
                         "python word_path.py boy man mind body")
+    return parser
 
-    args = parser.parse_args()
+
+def main(argv=None):
+    parser = build_parser()
+    args = parser.parse_args(argv)
 
     if not args.words:
         msg = "You must either pick at least two words!"
@@ -141,3 +141,9 @@ if __name__ == "__main__":
         wp.print_result(result)
         if k:
             print()
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

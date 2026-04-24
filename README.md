@@ -1,10 +1,10 @@
 ## transorthogonal-linguistics
 _[Travis Hoppe](http://thoppe.github.io/)_
 
-If heroku is running, checkout the live demo (it may take 30 seconds to warm up):
-
-   
-[https://transorthogonal-linguistics.herokuapp.com/](https://transorthogonal-linguistics.herokuapp.com/)
+Modernization status:
+- Baseline project date: `2015-06-26`
+- Current codebase is being modernized from that historical Python 2 snapshot
+- The active modernization contracts live in `docs/`
 
 ### Introduction
   
@@ -42,7 +42,34 @@ Personally, I perfer [Word2Vec](https://code.google.com/p/word2vec/) which was d
 
 ### Command-line interface
 
-    python transorthogonal_linguistics/word_path.py boy man
+Run from the repository root:
+
+```bash
+python transorthogonal_linguistics/word_path.py boy man
+python transorthogonal_linguistics/slerp_word_path.py boy man
+```
+
+Or after installing the package in an environment:
+
+```bash
+transorthogonal-words boy man
+transorthogonal-slerp boy man
+```
+
+### Development
+
+Minimal local setup:
+
+```bash
+python -m pip install -r requirements.txt
+python -m pip install -e .[dev]
+python -m pytest -q
+```
+
+Known current scope:
+- bundled `.npy` data files are treated as the canonical local fixture
+- there is no active web deployment in this repository
+- the first modernization pass focuses on Python 3 compatibility and harness coverage
 
 ### Examples
 

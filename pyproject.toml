@@ -12,6 +12,10 @@ dependencies = [
     "numpy",
 ]
 
+[project.scripts]
+transorthogonal-words = "transorthogonal_linguistics.word_path:main"
+transorthogonal-slerp = "transorthogonal_linguistics.slerp_word_path:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest",

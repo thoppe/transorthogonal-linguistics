@@ -128,8 +128,8 @@ def print_result(result):
     for word, time, distance in zip(*result):
         print("{:0.5f} {:0.3f} {}".format(time, distance, word))
 
-if __name__ == "__main__":
 
+def build_parser():
     import argparse
 
     desc = '''
@@ -154,8 +154,12 @@ if __name__ == "__main__":
                         nargs="*",
                         help="Space separated pairs of words example: "
                         "python word_path.py boy man mind body")
+    return parser
 
-    args = parser.parse_args()
+
+def main(argv=None):
+    parser = build_parser()
+    args = parser.parse_args(argv)
 
     if not args.words:
         msg = "You must either pick at least two words!"
@@ -181,3 +185,9 @@ if __name__ == "__main__":
 
         if k:
             print()
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
