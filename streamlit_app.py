@@ -152,7 +152,7 @@ st.markdown(
     .app-title {
         font-family: "Fraunces", serif;
         font-weight: 600;
-        font-size: 3.2rem;
+        font-size: 2.9rem;
         line-height: 0.95;
         letter-spacing: -0.02em;
         margin: 0 0 0.35rem 0;
