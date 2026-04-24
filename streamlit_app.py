@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pandas as pd
 import streamlit as st
 
 from transorthogonal_linguistics import Features
@@ -28,10 +27,11 @@ def load_features() -> Features:
     return Features()
 
 
-def build_dataframe(result) -> pd.DataFrame:
-    frame = pd.DataFrame(result_records(result))
-    frame["rank"] = range(1, len(frame) + 1)
-    return frame[["rank", "word", "time", "distance"]]
+def format_result_lines(result) -> str:
+    lines = []
+    for row in result_records(result):
+        lines.append(f"{row['word']} ({row['time']:.3f})")
+    return "\n".join(lines)
 
 
 def run_query(method: str, start_word: str, end_word: str, features: Features, limit: int):
@@ -81,8 +81,11 @@ with st.sidebar:
     )
     st.divider()
     st.markdown("**Links**")
-    st.link_button(":material/code: GitHub", GITHUB_URL, width="content")
-    st.link_button(":material/public: Travis Hoppe", HOMEPAGE_URL, width="content")
+    github_col, homepage_col = st.columns(2)
+    with github_col:
+        st.link_button(":material/code: GitHub", GITHUB_URL, width="stretch")
+    with homepage_col:
+        st.link_button(":material/public: Travis Hoppe", HOMEPAGE_URL, width="stretch")
 
 features = load_features()
 
@@ -108,7 +111,4 @@ except ValueError as exc:
     st.error(str(exc))
     st.stop()
 
-frame = build_dataframe(result)
-
-st.subheader("Semantic Path")
-st.dataframe(frame, width="stretch", hide_index=True)
+st.code(format_result_lines(result), language=None)
