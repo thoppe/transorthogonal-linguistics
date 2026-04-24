@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections import defaultdict
+
 import streamlit as st
 
 from transorthogonal_linguistics import Features
@@ -34,12 +36,50 @@ def load_features() -> Features:
     return Features()
 
 
-def result_rows(result):
-    rows = []
-    for row in result_records(result):
+def bucket_time(time_value: float) -> int:
+    if time_value >= 1.0:
+        return 9
+    return max(0, min(9, int(time_value * 10)))
+
+
+def format_tier_range(bucket_index: int) -> str:
+    start = bucket_index / 10
+    if bucket_index == 9:
+        return f"{start:.1f} to 1.0"
+    end = (bucket_index + 1) / 10
+    return f"{start:.1f} to {end:.1f}"
+
+
+def tiered_result_rows(result):
+    tiers = defaultdict(list)
+    records = result_records(result)
+    last_index = len(records) - 1
+    for index, row in enumerate(records):
         time = 0.0 if abs(row["time"]) < 0.0005 else row["time"]
-        rows.append((str(row["word"]), f"({time:.3f})"))
-    return rows
+        bucket_index = bucket_time(float(time))
+        tiers[bucket_index].append(
+            {
+                "word": str(row["word"]),
+                "time": float(time),
+                "is_first": index == 0,
+                "is_last": index == last_index,
+            }
+        )
+
+    return [
+        {
+            "index": bucket_index,
+            "label": format_tier_range(bucket_index),
+            "words": tiers.get(bucket_index, []),
+        }
+        for bucket_index in range(10)
+    ]
+
+
+def format_tier_words(words):
+    if not words:
+        return "-"
+    return ", ".join(word["word"] for word in words)
 
 
 def run_query(method: str, start_word: str, end_word: str, features: Features, limit: int):
@@ -136,6 +176,104 @@ st.markdown(
     div[data-testid="stHorizontalBlock"] p {
         font-family: "IBM Plex Mono", monospace;
     }
+
+    .tier-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+        margin-top: 1.25rem;
+    }
+
+    .tier-card {
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        border-radius: 18px;
+        padding: 1rem 1rem 0.95rem 1rem;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.94), rgba(244,247,251,0.96));
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+        min-height: 10rem;
+    }
+
+    .tier-topline {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .tier-index {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #6b7280;
+    }
+
+    .tier-range {
+        font-family: "Fraunces", serif;
+        font-size: 1.05rem;
+        line-height: 1.1;
+        color: #111827;
+    }
+
+    .tier-count {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.78rem;
+        color: #4b5563;
+    }
+
+    .tier-word-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+    }
+
+    .tier-word {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border-radius: 999px;
+        padding: 0.38rem 0.62rem;
+        background: #ffffff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.92rem;
+        line-height: 1;
+        color: #111827;
+    }
+
+    .tier-word-endpoint {
+        width: 100%;
+        justify-content: space-between;
+        border-color: rgba(15, 23, 42, 0.18);
+        background: linear-gradient(90deg, #ffffff, #f7fafc);
+    }
+
+    .tier-word-time {
+        color: #6b7280;
+        font-size: 0.8rem;
+    }
+
+    .tier-empty {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.88rem;
+        color: #9ca3af;
+        padding-top: 0.15rem;
+    }
+
+    @media (max-width: 900px) {
+        .tier-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    .tier-lines {
+        font-family: "IBM Plex Mono", monospace;
+        line-height: 1.7;
+        font-size: 1rem;
+        white-space: pre-wrap;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -196,7 +334,7 @@ with st.sidebar:
     with github_col:
         st.link_button(":material/code: GitHub", GITHUB_URL, width="stretch")
     with homepage_col:
-        st.link_button(":material/public: Travis Hoppe", HOMEPAGE_URL, width="stretch")
+        st.link_button(":material/public: Travis", HOMEPAGE_URL, width="stretch")
 
 features = load_features()
 
@@ -218,9 +356,28 @@ except ValueError as exc:
     st.error(str(exc))
     st.stop()
 
-for word, time_label in result_rows(result):
-    word_col, time_col = st.columns([3, 1], gap="small")
-    with word_col:
-        st.markdown(word)
-    with time_col:
-        st.markdown(time_label)
+tiers = tiered_result_rows(result)
+display_lines = []
+first_line = ""
+final_line = ""
+for tier in tiers:
+    first_words = [word for word in tier["words"] if word["is_first"]]
+    last_words = [word for word in tier["words"] if word["is_last"]]
+    middle_words = [
+        word for word in tier["words"] if not word["is_first"] and not word["is_last"]
+    ]
+
+    for first_word in first_words:
+        first_line = format_tier_words([first_word])
+
+    display_lines.append(format_tier_words(middle_words if not last_words else []))
+
+    for last_word in last_words:
+        final_line = format_tier_words([last_word])
+
+display_lines = [first_line, *display_lines, final_line]
+
+st.markdown(
+    f'<div class="tier-lines">{"<br>".join(display_lines)}</div>',
+    unsafe_allow_html=True,
+)
