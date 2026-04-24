@@ -1,6 +1,9 @@
 ## transorthogonal-linguistics
 _[Travis Hoppe](http://thoppe.github.io/)_
 
+Live app:
+- https://transorthogonal-linguistics.streamlit.app/
+
 Modernization status:
 - Baseline project date: `2015-06-26`
 - Current codebase has been modernized forward from that historical Python 2 snapshot
@@ -80,7 +83,7 @@ Current repo state:
 
 Known current scope:
 - bundled `.npy` data files under `transorthogonal_linguistics/data/` are treated as the canonical local fixture
-- there is no active web deployment in this repository
+- the deployed UI lives at `https://transorthogonal-linguistics.streamlit.app/`
 - the first modernization pass focuses on Python 3 compatibility and harness coverage
 
 ### Examples

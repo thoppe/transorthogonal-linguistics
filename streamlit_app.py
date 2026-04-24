@@ -21,7 +21,7 @@ EXAMPLE_PAIRS = [
 ]
 
 GITHUB_URL = "https://github.com/thoppe/transorthogonal-linguistics"
-HOMEPAGE_URL = "http://thoppe.github.io/"
+HOMEPAGE_URL = "https://transorthogonal-linguistics.streamlit.app/"
 DEFAULT_METHOD = "Slerp"
 DEFAULT_WORD_CUTOFF = 25
 METHOD_QUERY_VALUES = {
