@@ -27,11 +27,12 @@ def load_features() -> Features:
     return Features()
 
 
-def format_result_lines(result) -> str:
-    lines = []
+def result_rows(result):
+    rows = []
     for row in result_records(result):
-        lines.append(f"{row['word']} ({row['time']:.3f})")
-    return "\n".join(lines)
+        time = 0.0 if abs(row["time"]) < 0.0005 else row["time"]
+        rows.append((str(row["word"]), f"({time:.3f})"))
+    return rows
 
 
 def run_query(method: str, start_word: str, end_word: str, features: Features, limit: int):
@@ -50,13 +51,25 @@ def apply_selected_example():
 
 st.set_page_config(
     page_title="Transorthogonal Linguistics",
-    page_icon="🧭",
+    page_icon="🪐",
     layout="wide",
 )
 
 st.title("Transorthogonal Linguistics")
 st.caption(
     "Explore the words that lie in between a start and end word along a semantic path in the bundled embedding space."
+)
+st.markdown(
+    """
+    <style>
+    div[data-testid="stVerticalBlock"] div[data-testid="stHorizontalBlock"] p {
+        margin-top: 0.1rem;
+        margin-bottom: 0.1rem;
+        line-height: 1.1;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 with st.sidebar:
@@ -111,4 +124,9 @@ except ValueError as exc:
     st.error(str(exc))
     st.stop()
 
-st.code(format_result_lines(result), language=None)
+for word, time_label in result_rows(result):
+    word_col, time_col = st.columns([3, 1], gap="small")
+    with word_col:
+        st.markdown(word)
+    with time_col:
+        st.markdown(time_label)
