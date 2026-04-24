@@ -1,9 +1,11 @@
+import json
 import subprocess
 import sys
 
 import numpy as np
 
 from transorthogonal_linguistics import Features
+from transorthogonal_linguistics import __version__
 from transorthogonal_linguistics import ensure_words_exist
 from transorthogonal_linguistics import missing_words
 from transorthogonal_linguistics import slerp_word_path
@@ -42,6 +44,7 @@ def test_package_exports_are_available():
     assert callable(transorthogonal_words)
     assert callable(slerp_word_path)
     assert callable(validate_word)
+    assert __version__ == "0.1.0"
 
 
 def test_transorthogonal_words_returns_sorted_aligned_arrays():
@@ -118,3 +121,51 @@ def test_cli_reports_unknown_words_cleanly():
 
     assert result.returncode != 0
     assert "Unknown word(s): 'not-a-real-word'" in result.stderr
+
+
+def test_cli_reports_usage_errors_cleanly():
+    result = subprocess.run(
+        [sys.executable, "-m", "transorthogonal_linguistics.word_path", "boy"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode != 0
+    assert "expected an even number of input words" in result.stderr
+
+
+def test_cli_supports_version_flag():
+    result = subprocess.run(
+        [sys.executable, "-m", "transorthogonal_linguistics.word_path", "--version"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    assert __version__ in result.stdout
+
+
+def test_cli_supports_json_output():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "transorthogonal_linguistics.word_path",
+            "--format",
+            "json",
+            "boy",
+            "man",
+        ],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    payload = json.loads(result.stdout)
+
+    assert isinstance(payload, list)
+    assert payload
+    assert {"word", "distance", "time"} <= set(payload[0])

@@ -50,3 +50,6 @@ Assumed invariants for the bundled data:
 - The code relies on index alignment between those two arrays.
 
 These assumptions must be validated by the harness before depending on them.
+
+See also:
+- `docs/DATA_CONTRACT.md`

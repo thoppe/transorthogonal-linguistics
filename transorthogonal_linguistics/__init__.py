@@ -1,5 +1,8 @@
+__version__ = "0.1.0"
+
 __all__ = [
     "Features",
+    "__version__",
     "ensure_words_exist",
     "missing_words",
     "slerp_word_path",

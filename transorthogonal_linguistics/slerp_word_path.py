@@ -89,32 +89,42 @@ def slerp_word_path(w0,w1,features,
 def build_parser():
     import argparse
 
-    desc = '''
-    transorthogonal words (using slerp)
-
-    Moves across the sphere spanned by the orthogonal space,
-    only local words are considered by original transorthogonal function.
-    Interesting cases: boy man mind body fate destiny
-    teacher scientist girl woman conservative liberal
-    hard soft religion rationalism
-    '''
-    parser = argparse.ArgumentParser(description=desc)
+    desc = (
+        "Find words near a spherical interpolation path between each pair "
+        "of input words."
+    )
+    epilog = (
+        "Examples: boy man | mind body | fate destiny | "
+        "teacher scientist"
+    )
+    parser = argparse.ArgumentParser(description=desc, epilog=epilog)
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {wp.__version__}",
+    )
     parser.add_argument("--f_features",
-                        help="numpy feature matrix",
+                        help="path to the NumPy feature matrix",
                         default=wp._default_feature_file)
     parser.add_argument("--f_vocab",
-                        help="numpy vocab vector",
+                        help="path to the NumPy vocabulary vector",
                         default=wp._default_vocab_file)
     parser.add_argument("--threshold_cutoff", '-c',
-                        help="Distance cutoff",
+                        help="maximum geodesic distance for retained words",
                         type=float, default=1.05)
     parser.add_argument("--slerp_n", '-s',
-                        help="Number of interpolating slerp points",
+                        help="number of interpolation points along the path",
                         type=int, default=25)
+    parser.add_argument(
+        "--format",
+        choices=("text", "json"),
+        default="text",
+        help="output format",
+    )
     parser.add_argument("words",
                         nargs="*",
-                        help="Space separated pairs of words example: "
-                        "python word_path.py boy man mind body")
+                        metavar="WORD",
+                        help="space-separated word pairs, e.g. boy man mind body")
     return parser
 
 
@@ -123,12 +133,10 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     if not args.words:
-        msg = "You must either pick at least two words!"
-        raise SyntaxError(msg)
+        parser.error("expected at least one pair of input words")
 
     if len(args.words) % 2 != 0:
-        msg = "You input an even number of words!"
-        raise SyntaxError(msg)
+        parser.error("expected an even number of input words")
 
     word_pairs = [[w1, w2] for w1, w2 in zip(args.words[::2],
                                              args.words[1::2])]
@@ -142,9 +150,11 @@ def main(argv=None):
                                      threshold_cutoff=args.threshold_cutoff)
         except ValueError as exc:
             parser.error(str(exc))
-        wp.print_result(result)
-        if k:
+
+        if k and args.format == "text":
             print()
+
+        wp.emit_result(result, args.format)
 
     return 0
 

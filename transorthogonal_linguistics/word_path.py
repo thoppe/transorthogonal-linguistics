@@ -1,7 +1,13 @@
+import json
 import logging
 from pathlib import Path
 
 import numpy as np
+
+try:
+    from . import __version__
+except ImportError:  # pragma: no cover - supports direct script execution
+    __version__ = "0.1.0"
 
 _MODULE_ROOT = Path(__file__).resolve().parent
 _default_feature_file = str(_MODULE_ROOT / "data" / "features.npy")
@@ -141,31 +147,62 @@ def print_result(result):
         print("{:0.5f} {:0.3f} {}".format(time, distance, word))
 
 
+def result_records(result):
+    vocab, dist, time = result
+    return [
+        {
+            "word": str(word),
+            "distance": float(distance),
+            "time": float(t),
+        }
+        for word, distance, t in zip(vocab, dist, time)
+    ]
+
+
+def emit_result(result, output_format):
+    if output_format == "json":
+        print(json.dumps(result_records(result)))
+        return
+
+    print_result(result)
+
+
 def build_parser():
     import argparse
 
-    desc = '''
-    transorthogonal words
-
-    Moves across the lines spanned by the orthogonal space.
-    Interesting cases: boy man mind body fate destiny
-    teacher scientist girl woman conservative liberal
-    hard soft religion rationalism
-    '''
-    parser = argparse.ArgumentParser(description=desc)
+    desc = (
+        "Find words near the straight transorthogonal path between each pair "
+        "of input words."
+    )
+    epilog = (
+        "Examples: boy man | mind body | fate destiny | "
+        "teacher scientist"
+    )
+    parser = argparse.ArgumentParser(description=desc, epilog=epilog)
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+    )
     parser.add_argument("--f_features",
-                        help="numpy feature matrix",
+                        help="path to the NumPy feature matrix",
                         default=_default_feature_file)
     parser.add_argument("--f_vocab",
-                        help="numpy vocab vector",
+                        help="path to the NumPy vocabulary vector",
                         default=_default_vocab_file)
     parser.add_argument("--word_cutoff", '-c',
-                        help="Number of words to select",
+                        help="maximum number of nearby words to return per pair",
                         type=int, default=25)
+    parser.add_argument(
+        "--format",
+        choices=("text", "json"),
+        default="text",
+        help="output format",
+    )
     parser.add_argument("words",
                         nargs="*",
-                        help="Space separated pairs of words example: "
-                        "python word_path.py boy man mind body")
+                        metavar="WORD",
+                        help="space-separated word pairs, e.g. boy man mind body")
     return parser
 
 
@@ -174,12 +211,10 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     if not args.words:
-        msg = "You must either pick at least two words!"
-        raise SyntaxError(msg)
+        parser.error("expected at least one pair of input words")
 
     if len(args.words) % 2 != 0:
-        msg = "You input an even number of words!"
-        raise SyntaxError(msg)
+        parser.error("expected an even number of input words")
 
     word_pairs = [[w1, w2] for w1, w2 in zip(args.words[::2],
                                              args.words[1::2])]
@@ -195,10 +230,10 @@ def main(argv=None):
         except ValueError as exc:
             parser.error(str(exc))
 
-        print_result(result)
-
-        if k:
+        if k and args.format == "text":
             print()
+
+        emit_result(result, args.format)
 
     return 0
 
